@@ -1,0 +1,19 @@
+.board {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr;
+}
+
+.river {
+  background-color: steelblue;
+}
+
+.bank {
+  background-color: burlywood;
+}
+
+.fish {
+  height: 50px;
+  width: 50px;
+  position: absolute;
+}
