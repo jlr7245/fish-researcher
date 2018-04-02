@@ -1,32 +1,31 @@
 console.log('main.js is connected!')
 
-const times = x => f => {
-  if (x > 0) {
-    f()
-    setTimeout(() => times(x - 1)(f), 50)
-  }
-}
-
-const getRandomColor = () => constants.colors[Math.floor(Math.random() * constants.colors.length)]
-const generateStamp = () => Math.floor(Math.random() * Date.now()).toString(16)
-const generateSpeed = () => Math.floor(Math.random() * 50) + 30
-
-let river = {
+const river = {
   setup() {
     this.element = document.querySelector('.river')
     const { left, right, top, height } = this.element.getBoundingClientRect()
-    return { left, right, top, height, ...this }
+    this.setMidPoint(height)
+    this.left = left
+    this.height = height
+    this.top = top
+    this.right = right
   },
   randomPoint() {
     const diff = this.right - this.left - 50
     const offset = Math.floor(Math.random() * diff)
     return `${offset + this.left}px`
+  },
+  setMidPoint(height) {
+    this.midpoint = height / 2
   }
 }
 
-const constants = {
-  colors: ['red', 'green', 'blue', 'yellow', 'purple'],
-  body: null
+const state = {
+  caughtFish: [],
+  evaluateFish() {
+    const codeString = constants.input.value
+    console.log(codeString)
+  }
 }
 
 function createFish(howMany) {
@@ -44,6 +43,10 @@ class Fish {
     this.stamp = stamp
     this.offset = offset
     this.speed = speed
+    this.hasBeenCaught = false
+    this.data = {
+      color, speed
+    }
   }
 
   create() {
@@ -65,6 +68,10 @@ class Fish {
     setInterval(() => {
       const currentTopVal = parseInt(this.domElement.style.top)
       this.domElement.style.top = `${currentTopVal + this.speed * 0.2}px`
+      if (this.domElement.getBoundingClientRect().bottom > river.midpoint && !this.hasBeenCaught) {
+        this.catch()
+        this.hasBeenCaught = true
+      }
       if (this.domElement.getBoundingClientRect().bottom > river.height) this.remove()
     }, 30)
   }
@@ -73,11 +80,18 @@ class Fish {
     constants.body.removeChild(this.domElement)
   }
 
+  catch() {
+    this.domElement.innerHTML = 'c'
+    state.caughtFish.push({...this.data})
+  }
+
 }
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  river = river.setup()
+  river.setup()
   constants.body = document.querySelector('body')
-  createFish(5)
+  constants.input = document.querySelector('#thingtodo')
+  document.querySelector('#doit').addEventListener('click', state.evaluateFish)
+  createFish(10)
 })
