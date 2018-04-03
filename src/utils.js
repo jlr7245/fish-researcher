@@ -13,3 +13,13 @@ const constants = {
   colors: ['red', 'green', 'blue', 'yellow', 'purple'],
   body: null
 }
+
+const changeOnArbitraryLength = (num, cb) => ({
+  set: (target, prop, val, rec) => {
+    target[prop] = val
+    if (prop === 'length' && target.length ===  num) {
+      cb()
+    }
+    return true
+  }
+})

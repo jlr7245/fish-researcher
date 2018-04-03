@@ -20,21 +20,23 @@ const river = {
   }
 }
 
-const state = {
-  caughtFish: [],
-  evaluateFish() {
-    const codeString = constants.input.value
-    console.log(codeString)
-  }
+const evaluateFish = () => {
+  const codeString = constants.input.value
+  const arr = state.caughtFish.map(eval(codeString))
+  console.log(arr)
+  constants.output.innerHTML = `[${arr.join(', ')}]`
 }
 
-function createFish(howMany) {
-  times(howMany)(() => new Fish(
-    getRandomColor(),
-    river.randomPoint(),
-    generateStamp(),
-    generateSpeed()
-  ).init())
+const state = {
+  caughtFish: new Proxy([], changeOnArbitraryLength(10, evaluateFish)),
+  createFish(howMany) {
+    times(howMany)(() => new Fish(
+      getRandomColor(),
+      river.randomPoint(),
+      generateStamp(),
+      generateSpeed()
+    ).init())
+  }
 }
 
 class Fish {
@@ -54,7 +56,7 @@ class Fish {
     this.domElement.classList.add('fish')
     this.domElement.style.backgroundColor = this.color
     this.domElement.style.left = this.offset
-    this.domElement.style.top = 0
+    this.domElement.style.top = '-50px'
     this.domElement.dataset.stamp = this.stamp
     constants.body.appendChild(this.domElement)
   }
@@ -92,6 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
   river.setup()
   constants.body = document.querySelector('body')
   constants.input = document.querySelector('#thingtodo')
-  document.querySelector('#doit').addEventListener('click', state.evaluateFish)
-  createFish(10)
+  constants.output = document.querySelector('#output')
+  document.querySelector('#doit').addEventListener('click', () => state.createFish(10))
 })
