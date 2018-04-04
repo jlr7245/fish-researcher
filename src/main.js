@@ -21,14 +21,12 @@ const river = {
 }
 
 const evaluateFish = () => {
-  const codeString = constants.input.value
-  const arr = state.caughtFish.map(eval(codeString))
-  console.log(arr)
+  const arr = state.caughtFish.map(eval(constants.inputValue()))
   constants.output.innerHTML = `[${arr.join(', ')}]`
 }
 
 const state = {
-  caughtFish: new Proxy([], changeOnArbitraryLength(10, evaluateFish)),
+  caughtFish: new Proxy([], updateOnLengthChange(evaluateFish)),
   createFish(howMany) {
     times(howMany)(() => new Fish(
       getRandomColor(),
@@ -36,6 +34,18 @@ const state = {
       generateStamp(),
       generateSpeed()
     ).init())
+  }
+}
+
+class Level {
+  constructor({ levelNum, skill, text, solution, evaluate, fishNum }) {
+    this.levelNum = levelNum
+    this.skill = skill
+    this.text = text
+    this.solution = solution
+    this.evaluate = evaluate.bind(this, this.caughtFish)
+    this.fishNum = fishNum
+    this.caughtFish = new Proxy([], updateOnLengthChange(this.evaluateFish))
   }
 }
 

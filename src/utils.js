@@ -7,17 +7,21 @@ const times = x => f => {
 
 const getRandomColor = () => constants.colors[Math.floor(Math.random() * constants.colors.length)]
 const generateStamp = () => Math.floor(Math.random() * Date.now()).toString(16)
-const generateSpeed = () => Math.floor(Math.random() * 30) + 10
+const generateSpeed = () => Math.floor(Math.random() * 20) + 20
 
 const constants = {
   colors: ['red', 'green', 'blue', 'yellow', 'purple'],
-  body: null
+  body: null,
+  input: null,
+  inputValue() {
+    return this.input.value
+  }
 }
 
-const changeOnArbitraryLength = (num, cb) => ({
+const updateOnLengthChange = (cb) => ({
   set: (target, prop, val, rec) => {
     target[prop] = val
-    if (prop === 'length' && target.length ===  num) {
+    if (prop === 'length') {
       cb()
     }
     return true
